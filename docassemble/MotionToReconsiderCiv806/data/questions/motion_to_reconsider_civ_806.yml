@@ -1,0 +1,490 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.AKA2JBranding:custom_organization.yml
+---
+metadata:
+  title: >-
+    Motion to Reconsider
+  short title: >-
+    Motion to Reconsider
+  description: |-
+    This interview helps someone in Alaska ask the judge  to change a decision or order they made in the last 10 days..
+  tags:
+    - "FA-00-00-00-00"
+  authors:
+    - Caroline Robinson
+  original_form:
+    - https://courts.alaska.gov/shc/family/docs/shc-1545n.pdf
+  help_page_url: >-
+    https://courts.alaska.gov/shc/family/after-judgment.htm
+  help_page_title: >-
+    After the Final Order and Judgment
+  allowed_courts: []
+  typical_role: "unknown"
+  al_weaver_version: "1.10.1"
+  generated_on: "2023-06-05"
+---
+code: |
+  # This controls the default country and list of states in address field questions
+  AL_DEFAULT_COUNTRY = "US"
+---
+code: |
+  # This controls the default state in address field questions
+  AL_DEFAULT_STATE = "AK"
+---
+code: |
+  github_repo_name =  'docassemble-MotionToReconsiderCiv806'
+---
+code: |
+  interview_short_title = "Ask the judge to change a decision or order they made in the last 10 days."
+---
+code: |
+  al_form_type = "existing_case" 
+---
+objects:
+  - users: ALPeopleList.using(ask_number=True,target_number=1)
+  - other_parties: ALPeopleList.using(ask_number=True,target_number=1)
+---
+sections:
+  - review_motion_to_reconsider_civ_806: Review your answers
+---
+#################### Interview order #####################
+comment: |
+  Controls order and branching logic for questions specific to this form
+id: interview_order_motion_to_reconsider_civ_806
+code: |
+  # Set the allowed courts for this interview
+  allowed_courts = []
+  nav.set_section("review_motion_to_reconsider_civ_806")
+  # Below sets the user_role and user_ask_role by asking a question.
+  # You can set user_ask_role directly instead to either 'plaintiff' or 'defendant'
+  user_ask_role
+  users.gather()
+  set_parts(subtitle=str(users))
+  certificate_of_distribution_date
+  docket_number
+  set_progress(14)
+  trial_court
+  has_addendum
+  has_proposed_order
+  set_progress(28)
+  plaintiff_served
+  agree_to_be_emailed
+  plaintiffs.gather()
+  set_progress(42)
+  defendants.gather()
+  who_was_served
+  users[0].email
+  set_progress(56)
+  users[0].phone_number
+  users[0].mailing_address.address
+  interview_order_motion_to_reconsider_civ_806 = True
+---
+###################### Main order ######################
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: True
+code: |
+  al_intro_screen
+  motion_to_reconsider_civ_806_intro
+  interview_order_motion_to_reconsider_civ_806
+  signature_date
+  # Store anonymous data for analytics / statistics
+  store_variables_snapshot(
+      persistent=True,
+      data={
+          "zip": showifdef("users[0].address.zip"),
+          "reached_interview_end": True,
+      },
+  )
+  motion_to_reconsider_civ_806_download
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Motion_to_Reconsider
+continue button field: motion_to_reconsider_civ_806_intro
+question: |
+  Motion to Reconsider
+subquestion: |
+  This interview will help you ask the judge to Reconsideration asks a judge to change a decision or order they made in the last 10 days..
+  
+  Before you get started, please gather:
+  
+  1. 
+  1. 
+  1. 
+  
+  When you are finished, you will need to:
+  
+  1. 
+  1. 
+  
+  Most people take about _______ minutes to finish this interview.
+---
+id: When did the court send you the decision
+question: |
+  When did the court send you the decision?
+fields:
+  - "Date of certificate of distribution": certificate_of_distribution_date
+    datatype: date
+---
+id: Why should the judge change their decision
+question: |
+  Why should the judge change their decision?
+subquestion: |
+  Lengthy explanation:
+fields:
+  - "Has addendum": has_addendum
+    datatype: yesno
+  - "Reconsider mistake": reconsider_mistake
+    datatype: yesno
+  - "Reconsider missed info": reconsider_missed_info
+    datatype: yesno
+  - "Reconsider misunderstood motion": reconsider_misunderstood_motion
+    datatype: yesno
+  - "Reconsider law changed": reconsider_law_changed
+    datatype: yesno
+  - "Reconsider part of order explanation": reconsider_part_of_order_explanation
+    input type: area
+---
+id: Proposed order skip this screen for users
+question: |
+  Proposed order - skip this screen for users.
+subquestion: |
+  Or add in here what should go into that form.
+fields:
+  - "Has proposed order": has_proposed_order
+    datatype: yesno
+---
+id: Serving the other party
+question: |
+  Serving the other party
+fields:
+  - "Agree to be emailed": agree_to_be_emailed
+    datatype: yesno
+  - "Serve w truefile is true": serve_w_truefile_is_true
+    datatype: yesno
+  - "Serve w truefile is false": serve_w_truefile_is_false
+    datatype: yesno
+  - "Date of service": service_date
+    datatype: date
+  - "Service time": service_time
+    maxlength: 9
+  - "Service by mail": service_by_mail
+    datatype: yesno
+  - "Service by email": service_by_email
+    datatype: yesno
+  - "Service by hand": service_by_hand
+    datatype: yesno
+---
+id: Is the other party plaintiff or defendant or someone else
+question: |
+  Is the other party plaintiff or defendant or someone else?
+fields:
+  - "Plaintiff served": plaintiff_served
+    datatype: yesno
+  - "Defendant served": defendant_served
+    datatype: yesno
+  - "Other served": other_served
+    datatype: yesno
+---
+id: you said other who
+question: |
+  you said other - who?
+fields:
+  - "Who was served": who_was_served
+    maxlength: 28
+---
+id: preview motion_to_reconsider_civ_806
+question: |
+  Preview your form before you sign it
+subquestion: |
+  Here is a preview of the form you will sign on the next page.   
+  
+  ${ al_court_bundle.as_pdf(key='preview') }
+
+  Click the image to open it in a new tab. Click the "Edit answers" button
+  to edit your answers.
+
+  ${ action_button_html(url_action('review_motion_to_reconsider_civ_806'), label='Edit answers', color='info') }
+  
+  Remember to come back to this window to continue and sign your form.
+continue button field: motion_to_reconsider_civ_806_preview_question    
+---
+code: |
+  signature_fields = []
+---
+code: |
+  # This is a placeholder for the addresses that will be searched
+  # for matching address to court. Edit if court venue is based on 
+  # a different address than the user's
+  [user.address.address for user in users.complete_elements()]
+  addresses_to_search = [user.address for user in users.complete_elements()]
+---
+id: motion to reconsider civ 806 review screen
+event: review_motion_to_reconsider_civ_806
+question: |
+  Review your answers
+review:
+  - Edit: has_addendum
+    button: |
+      **Has addendum**:
+      ${ word(yesno(has_addendum)) }
+  - Edit: users.revisit
+    button: |
+      **Users**
+
+      % for item in users:
+        * ${ item }
+      % endfor
+  - Edit: has_proposed_order
+    button: |
+      **Has proposed order**:
+      ${ word(yesno(has_proposed_order)) }
+  - Edit: agree_to_be_emailed
+    button: |
+      **Agree to be emailed**:
+      ${ word(yesno(agree_to_be_emailed)) }
+  - Edit: trial_court
+    button: |
+      **Trial court**
+  
+      % if defined("trial_court.name.first"):
+      * name: ${ trial_court.name.full() }
+      % endif
+  - Edit: plaintiffs.revisit
+    button: |
+      **Plaintiffs**
+
+      % for item in plaintiffs:
+        * ${ item }
+      % endfor
+  - Edit: defendants.revisit
+    button: |
+      **Defendants**
+
+      % for item in defendants:
+        * ${ item }
+      % endfor
+  - Edit: docket_number
+    button: |
+      **Docket number**:
+      ${ docket_number }
+  - Edit: certificate_of_distribution_date
+    button: |
+      **Date of certificate of distribution**:
+      ${ certificate_of_distribution_date }
+  - Edit: serve_w_truefile_is_true
+    button: |
+      **Serve w truefile is true**:
+      ${ word(yesno(serve_w_truefile_is_true)) }
+  - Edit: reconsider_mistake
+    button: |
+      **Reconsider mistake**:
+      ${ word(yesno(reconsider_mistake)) }
+  - Edit: serve_w_truefile_is_false
+    button: |
+      **Serve w truefile is false**:
+      ${ word(yesno(serve_w_truefile_is_false)) }
+  - Edit: service_date
+    button: |
+      **Date of service**:
+      ${ service_date }
+  - Edit: service_time
+    button: |
+      **Service time**:
+      ${ service_time }
+  - Edit: reconsider_missed_info
+    button: |
+      **Reconsider missed info**:
+      ${ word(yesno(reconsider_missed_info)) }
+  - Edit: service_by_mail
+    button: |
+      **Service by mail**:
+      ${ word(yesno(service_by_mail)) }
+  - Edit: service_by_email
+    button: |
+      **Service by email**:
+      ${ word(yesno(service_by_email)) }
+  - Edit: service_by_hand
+    button: |
+      **Service by hand**:
+      ${ word(yesno(service_by_hand)) }
+  - Edit: reconsider_misunderstood_motion
+    button: |
+      **Reconsider misunderstood motion**:
+      ${ word(yesno(reconsider_misunderstood_motion)) }
+  - Edit: plaintiff_served
+    button: |
+      **Plaintiff served**:
+      ${ word(yesno(plaintiff_served)) }
+  - Edit: reconsider_law_changed
+    button: |
+      **Reconsider law changed**:
+      ${ word(yesno(reconsider_law_changed)) }
+  - Edit: defendant_served
+    button: |
+      **Defendant served**:
+      ${ word(yesno(defendant_served)) }
+  - Edit: other_served
+    button: |
+      **Other served**:
+      ${ word(yesno(other_served)) }
+  - Edit: who_was_served
+    button: |
+      **Who was served**:
+      ${ who_was_served }
+  - Edit: reconsider_part_of_order_explanation
+    button: |
+      **Reconsider part of order explanation**:
+      > ${ single_paragraph(reconsider_part_of_order_explanation) }
+---
+continue button field: users.revisit
+question: |
+  Edit users
+subquestion: |
+  ${ users.table }
+
+  ${ users.add_action() }
+---
+table: users.table
+rows: users
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+  - Email: |
+      row_item.email if defined("row_item.email") else ""
+  - Phone number: |
+      row_item.phone_number if defined("row_item.phone_number") else ""
+  - Mailing address: |
+      row_item.mailing_address.block() if defined("row_item.mailing_address.address") else ""
+edit:
+  - name.first
+  - email
+  - phone_number
+  - mailing_address.address
+confirm: True
+
+---
+continue button field: plaintiffs.revisit
+question: |
+  Edit plaintiffs
+subquestion: |
+  ${ plaintiffs.table }
+
+  ${ plaintiffs.add_action() }
+---
+table: plaintiffs.table
+rows: plaintiffs
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+edit:
+  - name.first
+confirm: True
+
+---
+continue button field: defendants.revisit
+question: |
+  Edit defendants
+subquestion: |
+  ${ defendants.table }
+
+  ${ defendants.add_action() }
+---
+table: defendants.table
+rows: defendants
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+edit:
+  - name.first
+confirm: True
+
+---
+id: download motion_to_reconsider_civ_806
+event: motion_to_reconsider_civ_806_download
+question: |
+  All done
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_motion_to_reconsider_civ_806'), label='Edit answers', color='info') }
+  
+  
+  ${ al_user_bundle.download_list_html() }
+  
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
+
+progress: 100
+---
+# ALDocument objects specify the metadata for each template
+objects:
+  - motion_to_reconsider_civ_806_Post_interview_instructions: ALDocument.using(title="Instructions", filename="motion_to_reconsider_civ_806_next_steps.docx", enabled=True, has_addendum=False)
+  - motion_to_reconsider_civ_806_attachment: ALDocument.using(title="Motion to Reconsider", filename="motion_to_reconsider_civ_806", enabled=True, has_addendum=True, default_overflow_message=AL_DEFAULT_OVERFLOW_MESSAGE)
+---
+# Bundles group the ALDocuments into separate downloads, such as for court and for the user
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[motion_to_reconsider_civ_806_Post_interview_instructions, motion_to_reconsider_civ_806_attachment], filename="motion_to_reconsider_civ_806", title="All forms to download for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[motion_to_reconsider_civ_806_attachment],  filename="motion_to_reconsider_civ_806", title="All forms to deliver to court", enabled=True)
+---
+# Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is 
+# used for "preview" and "final" keys, and logic in the template checks the value of 
+# `i` to show or hide the user's signature
+attachment:
+  name: Post-interview-Instructions
+  filename: motion_to_reconsider_civ_806_next_steps
+  docx template file: motion_to_reconsider_civ_806_next_steps.docx
+  variable name: motion_to_reconsider_civ_806_Post_interview_instructions[i]
+  skip undefined: True
+  tagged pdf: True
+---
+attachment:
+  name: motion to reconsider civ 806
+  filename: motion_to_reconsider_civ_806
+  variable name: motion_to_reconsider_civ_806_attachment[i]
+  skip undefined: True
+  pdf template file: motion_to_reconsider_civ_806.pdf
+  fields:
+      - "has_addendum": ${ has_addendum }
+      - "users_name": ${ users[0] }
+      - "users_name__1": ${ users[0] }
+      - "users_email": ${ users[0].email }
+      - "users_phone": ${ users[0].phone_number }
+      - "has_proposed_order": ${ has_proposed_order }
+      - "users_mailing_address": ${ users[0].mailing_address }
+      - "agree_to_be_emailed": ${ agree_to_be_emailed }
+      - "trial_court": ${ trial_court }
+      - "plaintiffs": ${ plaintiffs }
+      - "defendants": ${ defendants }
+      - "docket_number": ${ docket_number }
+      - "certificate_of_distribution_date": ${ certificate_of_distribution_date.format() }
+      - "serve_w_truefile_is_true": ${ serve_w_truefile_is_true }
+      - "reconsider_mistake": ${ reconsider_mistake }
+      - "serve_w_truefile_is_false": ${ serve_w_truefile_is_false }
+      - "service_date": ${ service_date.format() }
+      - "service_time": ${ service_time }
+      - "reconsider_missed_info": ${ reconsider_missed_info }
+      - "service_by_mail": ${ service_by_mail }
+      - "service_by_email": ${ service_by_email }
+      - "service_by_hand": ${ service_by_hand }
+      - "reconsider_misunderstood_motion": ${ reconsider_misunderstood_motion }
+      - "plaintiff_served": ${ plaintiff_served }
+      - "reconsider_law_changed": ${ reconsider_law_changed }
+      - "defendant_served": ${ defendant_served }
+      - "other_served": ${ other_served }
+      - "who_was_served": ${ who_was_served }
+      - "reconsider_part_of_order_explanation": ${ motion_to_reconsider_civ_806_attachment.safe_value("reconsider_part_of_order_explanation") }
+---
+code: |
+  motion_to_reconsider_civ_806_attachment.overflow_fields["reconsider_part_of_order_explanation"].overflow_trigger = 1170
+  motion_to_reconsider_civ_806_attachment.overflow_fields["reconsider_part_of_order_explanation"].label = "Reconsider part of order explanation"
+  motion_to_reconsider_civ_806_attachment.overflow_fields.gathered = True
+
+
+
